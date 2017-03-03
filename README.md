@@ -1,8 +1,9 @@
 # 13TeV_tW_Analysis
 
 ##Analyzer for analysing EDM-tuples (coming from EDM-Analyzer)
+.
 
-  cmsrel CMSSW_8_0_16;
+  cmsrel CMSSW_8_0_16
   cd CMSSW_8_0_16/src
   cmsenv
   PatMuonEDMAnalyzer #to test the analyser
