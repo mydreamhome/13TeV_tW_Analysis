@@ -8,7 +8,6 @@ public:
         static vector<double> muonPt_;
         static vector<double> muonEta_;
         static vector<double> muonPhi_;
-        static vector<double> LeptonMult_;
         static vector<double> MllDistri_;
         static vector<double> LeadingJetPt_;
         static vector<double> SubLeadingJetPt_;
@@ -18,20 +17,18 @@ public:
         static vector<double> SubLeadingjetEta_;
         static vector<double> LeadingJetPhi_;
         static vector<double> SubLeadingJetPhi_;
-        static vector<double> LooseLept10MultIso_;
-        static vector<double> tight10MultIso_;
-        static vector<double> tight10MultNonIso_;
-        static vector<double> tight20MultIso_;
-        static vector<double> LooseLept10MultNonIso_;
-        static vector<double> LooseLept10MultNoIso_;
-        static vector<double> tight10MultNoIso_;
         static vector<double> JetMult_;
         static vector<double> metPt_;
         static vector<double> vtxMult_;
-        static vector<double> CLeanedJETMult_;
+        static vector<double> bJETMult_;
         static vector<double> GenEventInfo_;
         static vector<double> PUINFO_;
-    
+        static vector<double> LeadingLeptPt_;
+        static vector<double> LeadingLeptEta_;
+        static vector<double> LeadingLeptPhi_;
+        static vector<double> SubLeadingLeptPt_;
+        static vector<double> SubLeadingLeptEta_;
+        static vector<double> SubLeadingLeptPhi_;
     
     static void fillHisto(TTree* t, int Case, vector<Collection::DATA>*  v)
     {
@@ -45,7 +42,6 @@ public:
                 muonPt_.push_back((v->at(i)).muonPt);
                 muonEta_.push_back((v->at(i)).muonEta);
                 muonPhi_.push_back((v->at(i)).muonPhi);
-                LeptonMult_.push_back((v->at(i)).TotalLeptMult);
                 MllDistri_.push_back((v->at(i)).mll);
                 LeadingJetPt_.push_back((v->at(i)).jetPtLeading);
                 SubLeadingJetPt_.push_back((v->at(i)).jetPtSubLeading);
@@ -55,19 +51,18 @@ public:
                 SubLeadingjetEta_.push_back((v->at(i)).jetEtaSubLeading);
                 LeadingJetPhi_.push_back((v->at(i)).jetPhiLeading);
                 SubLeadingJetPhi_.push_back((v->at(i)).jetPhiSubLeading);
-                LooseLept10MultIso_.push_back((v->at(i)).LooseLept10MultIso);
-                tight10MultIso_.push_back((v->at(i)).tight10MultIso);
-                tight10MultNonIso_.push_back((v->at(i)).tight10MultNonIso);
-                tight20MultIso_.push_back((v->at(i)).tight20MultIso);
-                LooseLept10MultNonIso_.push_back((v->at(i)).LooseLept10MultNonIso);
-                LooseLept10MultNoIso_.push_back((v->at(i)).LooseLept10MultNoIso);
-                tight10MultNoIso_.push_back((v->at(i)).tight10MultNoIso);
-                JetMult_.push_back((v->at(i)).jetMult);
+                JetMult_.push_back((v->at(i)).loosejetMult);
                 metPt_.push_back((v->at(i)).metPt);
                 vtxMult_.push_back((v->at(i)).vtxMult);
-                CLeanedJETMult_.push_back((v->at(i)).CLeanedJETMult);
+                bJETMult_.push_back((v->at(i)).bJETMult);
                 GenEventInfo_.push_back((v->at(i)).genProductWeight);
                 PUINFO_.push_back((v->at(i)).PUinfo);
+                LeadingLeptPt_.push_back((v->at(i)).LeadingLeptPt);
+                LeadingLeptEta_.push_back((v->at(i)).LeadingLeptEta);
+                LeadingLeptPhi_.push_back((v->at(i)).LeadingLeptPhi);
+                SubLeadingLeptPt_.push_back((v->at(i)).SubLeadingLeptPt);
+                SubLeadingLeptEta_.push_back((v->at(i)).SubLeadingLeptEta);
+                SubLeadingLeptPhi_.push_back((v->at(i)).SubLeadingLeptPhi);
             }
             if(Case==2)
             {
@@ -77,7 +72,6 @@ public:
                 electronPt_.push_back((v->at(i)).muonPt);
                 electronEta_.push_back((v->at(i)).muonEta);
                 electronPhi_.push_back((v->at(i)).muonPhi);
-                LeptonMult_.push_back((v->at(i)).TotalLeptMult);
                 MllDistri_.push_back((v->at(i)).mll);
                 LeadingJetPt_.push_back((v->at(i)).jetPtLeading);
                 SubLeadingJetPt_.push_back((v->at(i)).jetPtSubLeading);
@@ -87,19 +81,18 @@ public:
                 SubLeadingjetEta_.push_back((v->at(i)).jetEtaSubLeading);
                 LeadingJetPhi_.push_back((v->at(i)).jetPhiLeading);
                 SubLeadingJetPhi_.push_back((v->at(i)).jetPhiSubLeading);
-                LooseLept10MultIso_.push_back((v->at(i)).LooseLept10MultIso);
-                tight10MultIso_.push_back((v->at(i)).tight10MultIso);
-                tight10MultNonIso_.push_back((v->at(i)).tight10MultNonIso);
-                tight20MultIso_.push_back((v->at(i)).tight20MultIso);
-                LooseLept10MultNonIso_.push_back((v->at(i)).LooseLept10MultNonIso);
-                LooseLept10MultNoIso_.push_back((v->at(i)).LooseLept10MultNoIso);
-                tight10MultNoIso_.push_back((v->at(i)).tight10MultNoIso);
-                JetMult_.push_back((v->at(i)).jetMult);
+                JetMult_.push_back((v->at(i)).loosejetMult);
                 metPt_.push_back((v->at(i)).metPt);
                 vtxMult_.push_back((v->at(i)).vtxMult);
-                CLeanedJETMult_.push_back((v->at(i)).CLeanedJETMult);
+                bJETMult_.push_back((v->at(i)).bJETMult);
                 GenEventInfo_.push_back((v->at(i)).genProductWeight);
                 PUINFO_.push_back((v->at(i)).PUinfo);
+                LeadingLeptPt_.push_back((v->at(i)).LeadingLeptPt);
+                LeadingLeptEta_.push_back((v->at(i)).LeadingLeptEta);
+                LeadingLeptPhi_.push_back((v->at(i)).LeadingLeptPhi);
+                SubLeadingLeptPt_.push_back((v->at(i)).SubLeadingLeptPt);
+                SubLeadingLeptEta_.push_back((v->at(i)).SubLeadingLeptEta);
+                SubLeadingLeptPhi_.push_back((v->at(i)).SubLeadingLeptPhi);
             }
             
             if(Case==3)
@@ -110,7 +103,6 @@ public:
                 muonPt_.push_back((v->at(i)).muonPt);
                 muonEta_.push_back((v->at(i)).muonEta);
                 muonPhi_.push_back((v->at(i)).muonPhi);
-                LeptonMult_.push_back((v->at(i)).TotalLeptMult);
                 MllDistri_.push_back((v->at(i)).mll);
                 LeadingJetPt_.push_back((v->at(i)).jetPtLeading);
                 SubLeadingJetPt_.push_back((v->at(i)).jetPtSubLeading);
@@ -120,19 +112,18 @@ public:
                 SubLeadingjetEta_.push_back((v->at(i)).jetEtaSubLeading);
                 LeadingJetPhi_.push_back((v->at(i)).jetPhiLeading);
                 SubLeadingJetPhi_.push_back((v->at(i)).jetPhiSubLeading);
-                LooseLept10MultIso_.push_back((v->at(i)).LooseLept10MultIso);
-                tight10MultIso_.push_back((v->at(i)).tight10MultIso);
-                tight10MultNonIso_.push_back((v->at(i)).tight10MultNonIso);
-                tight20MultIso_.push_back((v->at(i)).tight20MultIso);
-                LooseLept10MultNonIso_.push_back((v->at(i)).LooseLept10MultNonIso);
-                LooseLept10MultNoIso_.push_back((v->at(i)).LooseLept10MultNoIso);
-                tight10MultNoIso_.push_back((v->at(i)).tight10MultNoIso);
-                JetMult_.push_back((v->at(i)).jetMult);
+                JetMult_.push_back((v->at(i)).loosejetMult);
                 metPt_.push_back((v->at(i)).metPt);
                 vtxMult_.push_back((v->at(i)).vtxMult);
-                CLeanedJETMult_.push_back((v->at(i)).CLeanedJETMult);
+                bJETMult_.push_back((v->at(i)).bJETMult);
                 GenEventInfo_.push_back((v->at(i)).genProductWeight);
                 PUINFO_.push_back((v->at(i)).PUinfo);
+                LeadingLeptPt_.push_back((v->at(i)).LeadingLeptPt);
+                LeadingLeptEta_.push_back((v->at(i)).LeadingLeptEta);
+                LeadingLeptPhi_.push_back((v->at(i)).LeadingLeptPhi);
+                SubLeadingLeptPt_.push_back((v->at(i)).SubLeadingLeptPt);
+                SubLeadingLeptEta_.push_back((v->at(i)).SubLeadingLeptEta);
+                SubLeadingLeptPhi_.push_back((v->at(i)).SubLeadingLeptPhi);
             }
         t->Fill();
         if(Case==1)
@@ -143,7 +134,6 @@ public:
             muonPt_.clear();
             muonEta_.clear();
             muonPhi_.clear();
-            LeptonMult_.clear();
             MllDistri_.clear();
             LeadingJetPt_.clear();
             SubLeadingJetPt_.clear();
@@ -153,26 +143,24 @@ public:
             SubLeadingjetEta_.clear();
             LeadingJetPhi_.clear();
             SubLeadingJetPhi_.clear();
-            LooseLept10MultIso_.clear();
-            tight10MultIso_.clear();
-            tight10MultNonIso_.clear();
-            tight20MultIso_.clear();
-            LooseLept10MultNonIso_.clear();
-            LooseLept10MultNoIso_.clear();
-            tight10MultNoIso_.clear();
             JetMult_.clear();
             metPt_.clear();
             vtxMult_.clear();
-            CLeanedJETMult_.clear();
+            bJETMult_.clear();
             GenEventInfo_.clear();
             PUINFO_.clear();
+            LeadingLeptPt_.clear();
+            LeadingLeptEta_.clear();
+            LeadingLeptPhi_.clear();
+            SubLeadingLeptPt_.clear();
+            SubLeadingLeptEta_.clear();
+            SubLeadingLeptPhi_.clear();
         }
         if(Case==2)
         {
             electronPt_.clear();
             electronEta_.clear();
             electronPhi_.clear();
-            LeptonMult_.clear();
             MllDistri_.clear();
             LeadingJetPt_.clear();
             SubLeadingJetPt_.clear();
@@ -182,26 +170,24 @@ public:
             SubLeadingjetEta_.clear();
             LeadingJetPhi_.clear();
             SubLeadingJetPhi_.clear();
-            LooseLept10MultIso_.clear();
-            tight10MultIso_.clear();
-            tight10MultNonIso_.clear();
-            tight20MultIso_.clear();
-            LooseLept10MultNonIso_.clear();
-            LooseLept10MultNoIso_.clear();
-            tight10MultNoIso_.clear();
             JetMult_.clear();
             metPt_.clear();
             vtxMult_.clear();
-            CLeanedJETMult_.clear();
+            bJETMult_.clear();
             GenEventInfo_.clear();
             PUINFO_.clear();
+            LeadingLeptPt_.clear();
+            LeadingLeptEta_.clear();
+            LeadingLeptPhi_.clear();
+            SubLeadingLeptPt_.clear();
+            SubLeadingLeptEta_.clear();
+            SubLeadingLeptPhi_.clear();
         }
         if(Case==3)
         {
             muonPt_.clear();
             muonEta_.clear();
             muonPhi_.clear();
-            LeptonMult_.clear();
             MllDistri_.clear();
             LeadingJetPt_.clear();
             SubLeadingJetPt_.clear();
@@ -211,19 +197,18 @@ public:
             SubLeadingjetEta_.clear();
             LeadingJetPhi_.clear();
             SubLeadingJetPhi_.clear();
-            LooseLept10MultIso_.clear();
-            tight10MultIso_.clear();
-            tight10MultNonIso_.clear();
-            tight20MultIso_.clear();
-            LooseLept10MultNonIso_.clear();
-            LooseLept10MultNoIso_.clear();
-            tight10MultNoIso_.clear();
             JetMult_.clear();
             metPt_.clear();
             vtxMult_.clear();
-            CLeanedJETMult_.clear();
+            bJETMult_.clear();
             GenEventInfo_.clear();
             PUINFO_.clear();
+            LeadingLeptPt_.clear();
+            LeadingLeptEta_.clear();
+            LeadingLeptPhi_.clear();
+            SubLeadingLeptPt_.clear();
+            SubLeadingLeptEta_.clear();
+            SubLeadingLeptPhi_.clear();
         }
         }
         //write
@@ -249,7 +234,6 @@ public:
         }
         if(Case==1 || Case==2 || Case==3)
         {
-            t->Branch("LeptonMult_",&LeptonMult_);
             t->Branch("MllDistri_",&MllDistri_);
             t->Branch("LeadingJetPt_",&LeadingJetPt_);
             t->Branch("SubLeadingJetPt_",&SubLeadingJetPt_);
@@ -259,32 +243,29 @@ public:
             t->Branch("SubLeadingjetEta_",&SubLeadingjetEta_);
             t->Branch("LeadingJetPhi_",&LeadingJetPhi_);
             t->Branch("SubLeadingJetPhi_",&SubLeadingJetPhi_);
-            t->Branch("LooseLept10MultIso_",&LooseLept10MultIso_);
-            t->Branch("tight10MultIso_",&tight10MultIso_);
-            t->Branch("tight10MultNonIso_",&tight10MultNonIso_);
-            t->Branch("tight20MultIso_",&tight20MultIso_);
-            t->Branch("LooseLept10MultNonIso_",&LooseLept10MultNonIso_);
-            t->Branch("LooseLept10MultNoIso_",&LooseLept10MultNoIso_);
-            t->Branch("tight10MultNoIso_",&tight10MultNoIso_);
             t->Branch("JetMult_",&JetMult_);
             t->Branch("metPt_",&metPt_);
             t->Branch("vtxMult_",&vtxMult_);
-            t->Branch("CLeanedJETMult_",&CLeanedJETMult_);
+            t->Branch("bJETMult_",&bJETMult_);
             t->Branch("GenEventInfo_",&GenEventInfo_);
             t->Branch("PUINFO_",&PUINFO_);
+            t->Branch("LeadingLeptPt_",&LeadingLeptPt_);
+            t->Branch("LeadingLeptEta_",&LeadingLeptEta_);
+            t->Branch("LeadingLeptPhi_",&LeadingLeptPhi_);
+            t->Branch("SubLeadingLeptPt_",&SubLeadingLeptPt_);
+            t->Branch("SubLeadingLeptEta_",&SubLeadingLeptEta_);
+            t->Branch("SubLeadingLeptPhi_",&SubLeadingLeptPhi_);
         }
         return t;
     }
     
 };
-
 vector<double> Histos::electronPt_;
 vector<double> Histos::electronEta_;
 vector<double> Histos::electronPhi_;
 vector<double> Histos::muonPt_;
 vector<double> Histos::muonEta_;
 vector<double> Histos::muonPhi_;
-vector<double> Histos::LeptonMult_;
 vector<double> Histos::MllDistri_;
 vector<double> Histos::LeadingJetPt_;
 vector<double> Histos::SubLeadingJetPt_;
@@ -294,18 +275,17 @@ vector<double> Histos::LeadingjetEta_;
 vector<double> Histos::SubLeadingjetEta_;
 vector<double> Histos::LeadingJetPhi_;
 vector<double> Histos::SubLeadingJetPhi_;
-vector<double> Histos::LooseLept10MultIso_;
-vector<double> Histos::tight10MultIso_;
-vector<double> Histos::tight10MultNonIso_;
-vector<double> Histos::tight20MultIso_;
-vector<double> Histos::LooseLept10MultNonIso_;
-vector<double> Histos::LooseLept10MultNoIso_;
-vector<double> Histos::tight10MultNoIso_;
 vector<double> Histos::JetMult_;
 vector<double> Histos::metPt_;
 vector<double> Histos::vtxMult_;
-vector<double> Histos::CLeanedJETMult_;
+vector<double> Histos::bJETMult_;
 vector<double> Histos::GenEventInfo_;
 vector<double> Histos::PUINFO_;
+vector<double> Histos::LeadingLeptPt_;
+vector<double> Histos::LeadingLeptEta_;
+vector<double> Histos::LeadingLeptPhi_;
+vector<double> Histos::SubLeadingLeptPt_;
+vector<double> Histos::SubLeadingLeptEta_;
+vector<double> Histos::SubLeadingLeptPhi_;
 
 

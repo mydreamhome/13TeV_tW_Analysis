@@ -4,7 +4,7 @@ public:
     
     struct DATA
     {
-        int vtxMult,evtID,eID,mID,TotalLeptMult,LooseLept10MultIso,tight10MultIso,tight10MultNonIso,tight20MultIso,LooseLept10MultNonIso,LooseLept10MultNoIso,tight10MultNoIso, PUinfo;
-        float ech,mch,electronPt,electronEta,electronPhi,muonPt,muonEta,muonPhi,electronEnergy,muonEnergy,mll,metPt,jetPtLeading,jetRapidityLeading,jetEtaLeading,jetPhiLeading,jetPtSubLeading,jetRapiditySubLeading,jetEtaSubLeading,jetPhiSubLeading,jetMult,CLeanedJETMult, genProductWeight;
+        int evtID,P1ID,P2ID,PUinfo,Catogary,vtxMult;
+        float P1ch,P2ch,electronPt,electronEta,electronPhi,muonPt,muonEta,muonPhi,electronEnergy,muonEnergy,mll,metPt,jetPtLeading,jetRapidityLeading,jetEtaLeading,jetPhiLeading,jetPtSubLeading,jetRapiditySubLeading,jetEtaSubLeading,jetPhiSubLeading,loosejetMult,bJETMult, genProductWeight,LeadingLeptPt,LeadingLeptEta,LeadingLeptPhi,SubLeadingLeptPt,SubLeadingLeptEta,SubLeadingLeptPhi,LeadingLeptEnergy,SubLeadingLeptEnergy;
     };
 };

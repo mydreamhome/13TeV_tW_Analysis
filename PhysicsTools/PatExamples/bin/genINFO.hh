@@ -1,4 +1,4 @@
-class ElectronMuon;
+class ElectronMuonOppChrg;
 
 class genINFO
 {
@@ -98,7 +98,7 @@ public:
         return t;
     }
     
-    friend class ElectronMuon;
+    friend class ElectronMuonOppChrg;
 };
 
 vector<double> genINFO::genWtinfo_;

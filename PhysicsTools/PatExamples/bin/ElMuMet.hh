@@ -1,10 +1,9 @@
-class Met;
 class Mllcut;
 class JetSelection;
 
-class ElectronMuonMet:public Histos
+class ElectronMuonMet
 {
-    int cEMuMet;
+    int c1E1M, c2E, C2M;
     
 public:
     vector<Collection::DATA>* v;
@@ -13,30 +12,33 @@ public:
         v = new vector<Collection::DATA>;
     }
 
-    int getEMuMet(){return cEMuMet;}
+    int getEW1E1M(){return c1E1M;}
+    int getEW2E(){return c2E;}
+    int getEW2M(){return C2M;}
     
-    vector<Collection::DATA>* setData(Mllcut& emel, Met& met)
+    vector<Collection::DATA>* setData(Mllcut& em)
     {
-        int events = 0;
-        for(unsigned int i=0;i<emel.v->size();i++)
+        int Events1e1m = 0;
+        int Events2e = 0;
+        int Events2m = 0;
+        Collection::DATA d;
+        
+        for(unsigned int i=0;i<em.v->size();i++)
         {
-            int evtID=((emel.v)->at(i)).evtID;
-            
-            if((met.v->at(evtID))->size() == 0)
+            if(((((em.v)->at(i)).Catogary)!=1) && ((((em.v)->at(i)).metPt) < 40)) continue;
+            else
             {
-                continue;
-            }
-            
-            for(unsigned int j=0;j<(met.v->at(evtID))->size();j++)
-            {
-                events++;
-                Collection::DATA d;
-                d = emel.v->at(i);
-                d.metPt=((met.v->at(evtID))->at(j)).pt;
+                d = em.v->at(i);
                 v->push_back(d);
             }
+            
+            if((((em.v)->at(i)).Catogary)==1) Events1e1m++;
+            if((((em.v)->at(i)).Catogary)==2) Events2m++;
+            if((((em.v)->at(i)).Catogary)==3) Events2e++;
         }
-        cEMuMet = events;
+        c1E1M = Events1e1m;
+        c2E = Events2e;
+        C2M = Events2m;
         return v;
     }
     

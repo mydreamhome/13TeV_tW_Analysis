@@ -1,11 +1,9 @@
-class ElectronMuonExtraLoose;
+class ElectronMuonOppChrg;
 class ElectronMuonMet;
 
-class Mllcut:public Histos
+class Mllcut
 {
-    
-    int cmllc;
-    
+    int c1E1M, c2E, C2M;
 public:
     vector<Collection::DATA>*  v;
     Mllcut()
@@ -13,49 +11,34 @@ public:
         v= new vector<Collection::DATA>;
     }
     
-    int getEWcmllc(){return cmllc;}
+    int getEW1E1M(){return c1E1M;}
+    int getEW2E(){return c2E;}
+    int getEW2M(){return C2M;}
   
-    vector<Collection::DATA>* setData1e1m(ElectronMuonExtraLoose& em)
+    vector<Collection::DATA>* setData(ElectronMuonOppChrg& em)
     {
-        int events = 0;
+        int Events1e1m = 0;
+        int Events2e = 0;
+        int Events2m = 0;
+        
         Collection::DATA emd;
         
         for(unsigned int i=0;i<em.v->size();i++)
         {
-            if(((em.v)->at(i)).mll < 20)
-            {
-                continue;
-            }
+           // if(((em.v)->at(i)).mll < 20) continue;
+            if(((((em.v)->at(i)).Catogary)!=1) && (((em.v)->at(i)).mll > 76 && ((em.v)->at(i)).mll < 106)) continue;
             else
             {
                 emd=((em.v)->at(i));
-                events++;
                 v->push_back(emd);
             }
+            if((((em.v)->at(i)).Catogary)==1) Events1e1m++;
+            if((((em.v)->at(i)).Catogary)==2) Events2m++;
+            if((((em.v)->at(i)).Catogary)==3) Events2e++;
         }
-        cmllc = events;
-        return v;
-    }
-    
-    vector<Collection::DATA>* setData(ElectronMuonExtraLoose& em)
-    {
-        int events = 0;
-        Collection::DATA emd;
-        
-        for(unsigned int i=0;i<em.v->size();i++)
-        {
-            if(((em.v)->at(i)).mll < 20 || (((em.v)->at(i)).mll > 81 && ((em.v)->at(i)).mll < 101))
-            {
-                continue;
-            }
-            else
-            {
-                emd=((em.v)->at(i));
-                events++;
-                v->push_back(emd);
-            }
-        }
-        cmllc = events;
+        c1E1M = Events1e1m;
+        c2E = Events2e;
+        C2M = Events2m;
         return v;
     }
     

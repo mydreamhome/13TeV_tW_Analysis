@@ -1,49 +1,25 @@
-class Electron;
-class Muon;
 class ElectronMuon;
+class ElectronMuonOppChrg;
 class Jet
 {
     struct DATA
     {
         float  jetID,csv,charge,energy,eta,rapidit,mass,phi,pt,area,neutralHadronEnergyFrac,neutralEmEnergyFrac,NumConstituents,chargedHadronEnergyFrac,chargedMultiplicity,chargedEmEnergyFrac,NumNeutralParticle;
-        bool   csvc,nonCsvc,etac,ptc,all,neutralHadronEnergyFraccc,neutralEmEnergyFraccc,NumConstituentscc,chargedHadronEnergyFraccc,chargedMultiplicitycc,chargedEmEnergyFraccc,loosec;
+        bool   csvc,nonCsvc,etac,ptc,neutralHadronEnergyFraccc,neutralEmEnergyFraccc,NumConstituentscc,chargedHadronEnergyFraccc,chargedMultiplicitycc,chargedEmEnergyFraccc,loosec;
     };
-    
-    vector<int>* JETMult;
-    vector<int>* JETCLEANEDMult;
-    int cTLj,cEwanyLj,cE1Lj,cE1j1t,cE2Lj,cE2j1t,cE2j2t,totalevts,cToClj,cEClj;
+    int totalevts;
 public:
-    static vector<int> jetMult_;
-    static vector<int> beforeJetMult_;
-    static vector<int> CllleanedJetMult_;
-    //beforeJetMult_ is total jet mult
-    //jetMult_ OR JETMult is Loose jet mult
-    //CllleanedJetMult_ OR JETCLEANEDMult is cleaned jet mult
     
     vector<vector<DATA>*>*  v;
     Jet()
     {
         v = new vector<vector<DATA>*>;
-        JETMult = new vector<int>;
-        JETCLEANEDMult = new vector<int>;
     }
     Jet(vector<vector<DATA>*>* uv)
     {
         v=uv;
-        JETMult = new vector<int>;
-        JETCLEANEDMult = new vector<int>;
     }
     int gettotalevts(){return totalevts;}
-    int getTLj(){return cTLj;}
-    int getEwanyLj(){return cEwanyLj;}
-    int getEwCleanedj(){return cEClj;}
-    int getTotalCleanedj(){return cToClj;}
-    int getE1Lj(){return cE1Lj;}
-    int getE1j1t(){return cE1j1t;}
-    int getE2Lj(){return cE2Lj;}
-    int getE2j1t(){return cE2j1t;}
-    int getE2j2t(){return cE2j2t;}
-    
     void setData(const char* fname)
     {
         TFile* inFile = TFile::Open(fname);
@@ -144,14 +120,12 @@ public:
         return;
     }
     
-    vector<vector<DATA>*>* selectDataLooseJet()
+    vector<vector<DATA>*>* selectDataLooseJet(ElectronMuon& em)//atleast 1 loose jet
     {
         vector<DATA>* dv;
         DATA d;
         
         vector<vector<DATA>*>* fv = new vector<vector<DATA>*>;
-        int events = 0;
-        int totalLooseJets = 0;
         for(unsigned int i=0; i < v->size(); i++)
         {
             vector<int>* jet_number;
@@ -159,23 +133,35 @@ public:
             vector<DATA>* fdv= new vector<DATA>;
             dv=v->at(i);
             bool isEventSelected=false;
-            int LooseJetsinEvent=0;
             for(unsigned int j=0;j<dv->size();j++)
             {
                 d=dv->at(j);
-                if(d.loosec)
+                
+                bool cleaned=false;
+                if(((((em.v->at(i))->size())) < 2) || ((((em.v->at(i))->at(0)).pt) < 25) || ((((em.v->at(i))->at(0)).charge * ((em.v->at(i))->at(1)).charge) > 0))
                 {
-                    totalLooseJets++;
+                    cleaned = true;
+                }
+                else
+                {
+                    float dR1 = deltaR(((em.v->at(i))->at(0)).eta,((em.v->at(i))->at(0)).phi,d.eta,d.phi);
+                    float dR2 = deltaR(((em.v->at(i))->at(1)).eta,((em.v->at(i))->at(1)).phi,d.eta,d.phi);
+                    if((dR1>0.4) && (dR2>0.4))
+                    {
+                        //accept jet
+                        cleaned=true;
+                    }
+                }
+                
+                if((d.loosec) && cleaned)
+                {
                     jet_number->push_back(j);
-                    LooseJetsinEvent++;
                     isEventSelected=true;
                 }
             }
             
-            JETMult->push_back(LooseJetsinEvent);
             if(isEventSelected)
             {
-                events++;
                 for(unsigned int k=0;k<jet_number->size();k++)
                 {
                     d=dv->at(jet_number->at(k));
@@ -184,325 +170,42 @@ public:
             }
             fv->push_back(fdv);
         }
-        cTLj=totalLooseJets;
-        cEwanyLj=events;
         return fv;
     }
- 
-    vector<vector<DATA>*>* selectDataCleaning(Electron& el,Muon& muon,Jet& looseJet)
+    
+    vector<vector<DATA>*>* selectDatabj(Jet& looseJet)//atleast 1 b jet
     {
         vector<DATA>* dv;
         DATA d;
+        
         vector<vector<DATA>*>* fv = new vector<vector<DATA>*>;
-        int events = 0;
-        int totalCleanedJets = 0;
         for(unsigned int i=0; i < (looseJet.v->size()); i++)
         {
             vector<int>* jet_number;
             jet_number = new vector<int>;
             vector<DATA>* fdv= new vector<DATA>;
-            int CleanedJetsinEvent=0;
-            if((looseJet.v->at(i))->size() >= 1)
+            dv=(looseJet.v->at(i));
+            bool isEventSelected=false;
+            for(unsigned int j=0;j<dv->size();j++)
             {
-                dv=(looseJet.v->at(i));
-                bool isEventSelected=false;
-                
-                for(unsigned int j=0;j<dv->size();j++)
+                d=dv->at(j);
+                if(d.csvc)
                 {
-                    d=dv->at(j);
-                    bool cleaned=true;
-                    for(unsigned int k3=0; k3 < (el.v->at(i)->size()); k3++)
-                    {
-                        if((el.v->at(i))->size()!=1 || (muon.v->at(i))->size()!=1)continue;
-                        if((el.v->at(i))->size()==1 && (muon.v->at(i))->size()==1)
-                        {
-                            float dR = deltaR(((el.v->at(i))->at(k3)).eta,((el.v->at(i))->at(k3)).phi,d.eta,d.phi);
-                            if(dR<0.4)
-                            {
-                                //reject jet
-                                cleaned=false;
-                                break;
-                            }
-                        }
-                    }
-                   /* if(!cleaned)
-                    {
-                        continue;
-                    }*/
-                    if(cleaned)
-                    {
-                        for(unsigned int k4=0; k4 < (muon.v->at(i)->size()); k4++)
-                        {
-                            if((el.v->at(i))->size()!=1 || (muon.v->at(i))->size()!=1)continue;
-                            if((el.v->at(i))->size()==1 && (muon.v->at(i))->size()==1)
-                            {
-                                float dR = deltaR(((muon.v->at(i))->at(k4)).eta,((muon.v->at(i))->at(k4)).phi,d.eta,d.phi);
-                                if(dR<0.4)
-                                {
-                                    //reject jet
-                                    cleaned=false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if(cleaned)
-                    {
-                        totalCleanedJets++;
-                        jet_number->push_back(j);
-                        CleanedJetsinEvent++;
-                        isEventSelected=true;
-                    }
-                }
-                
-                if(isEventSelected)
-                {
-                    events++;
-                    for(unsigned int k=0;k<jet_number->size();k++)
-                    {
-                        d=dv->at(jet_number->at(k));
-                        fdv->push_back(d);
-                    }
-                }
-            }
-            JETCLEANEDMult->push_back(CleanedJetsinEvent);
-            fv->push_back(fdv);
-        }
-        cToClj=totalCleanedJets;
-        cEClj=events;
-        return fv;
-    }
-    
-    vector<vector<DATA>*>* selectData1ljPtEta(Jet& looseJet)
-    {
-        vector<DATA>* dv;
-        DATA d;
-        
-        vector<vector<DATA>*>* fv = new vector<vector<DATA>*>;
-        int events = 0;
-        for(unsigned int i=0; i < (looseJet.v->size()); i++)
-        {
-            int jet_number = 0;
-            vector<DATA>* fdv= new vector<DATA>;
-            //if((looseJet.v->at(i))->size() < 1) continue;
-            if((looseJet.v->at(i))->size() >= 1)
-            {
-                dv=(looseJet.v->at(i));
-                bool isEventSelected=false;
-                int PassedJetsinEvent=0;
-                for(unsigned int j=0;j<dv->size();j++)
-                {
-                    d=dv->at(j);
-                    if(d.ptc && d.etac && d.loosec)
-                    {
-                        jet_number = j;
-                        PassedJetsinEvent++;
-                    }
-                }
-                if(PassedJetsinEvent==1)
-                {
+                    jet_number->push_back(j);
                     isEventSelected=true;
                 }
-                if(isEventSelected)
-                {
-                    events++;
-                    d=dv->at(jet_number);
-                    fdv->push_back(d);
-                }
             }
-            fv->push_back(fdv);
-        }
-        cE1Lj=events;
-        return fv;
-    }
-    
-    vector<vector<DATA>*>* selectData1j1b(Jet& j1lPtEta)
-    {
-        vector<DATA>* dv;
-        DATA d;
-        
-        vector<vector<DATA>*>* fv = new vector<vector<DATA>*>;
-        int events = 0;
-        int totalPassedBJets = 0;
-        for(unsigned int i=0; i < (j1lPtEta.v->size()); i++)
-        {
-            int jet_number = 0;
-            vector<DATA>* fdv= new vector<DATA>;
-           // if((j1lPtEta.v->at(i))->size() != 1) continue;
-            if((j1lPtEta.v->at(i))->size() == 1)
-            {
-                dv=(j1lPtEta.v->at(i));
-                bool isEventSelected=false;
-                int PassedBJetsinEvent=0;
-                for(unsigned int j=0;j<dv->size();j++)
-                {
-                    d=dv->at(j);
-                    if(d.all && d.loosec)
-                    {
-                        totalPassedBJets++;
-                        jet_number = j;
-                        PassedBJetsinEvent++;
-                    }
-                }
-                if(PassedBJetsinEvent==1)
-                {
-                    isEventSelected=true;
-                }
-                if(isEventSelected)
-                {
-                    events++;
-                    d=dv->at(jet_number);
-                    fdv->push_back(d);
-                }
-            }
-            fv->push_back(fdv);
-        }
-        cE1j1t=events;
-        return fv;
-    }
-    
-    vector<vector<DATA>*>* selectData2ljPtEta(Jet& looseJet)
-    {
-        vector<DATA>* dv;
-        DATA d;
-        vector<vector<DATA>*>* fv = new vector<vector<DATA>*>;
-        int events =0;
-        
-        for(unsigned int i=0; i < (looseJet.v->size()); i++)
-        {
-            int jet_number1 = 0;
-            int jet_number2 = 0;
-            vector<DATA>* fdv= new vector<DATA>;
             
-            //if((looseJet.v->at(i))->size() < 2) continue;
-            if((looseJet.v->at(i))->size() >= 2)
+            if(isEventSelected)
             {
-                dv=(looseJet.v->at(i));
-                bool isEventSelected=false;
-                int PassedBJetsinEvent=0;
-                for(unsigned int j=0;j<dv->size();j++)
+                for(unsigned int k=0;k<jet_number->size();k++)
                 {
-                    d=dv->at(j);
-                    if(d.ptc && d.etac && d.loosec)
-                    {
-                    
-                        if(PassedBJetsinEvent==0) jet_number1 = j;
-                        if(PassedBJetsinEvent==1) jet_number2 = j;
-                        PassedBJetsinEvent++;
-                    }
-                }
-            
-                if(PassedBJetsinEvent==2){isEventSelected=true;
-                }
-                if(isEventSelected)
-                {
-                    events++;
-                    d=dv->at(jet_number1);
-                    fdv->push_back(d);
-                    d=dv->at(jet_number2);
+                    d=dv->at(jet_number->at(k));
                     fdv->push_back(d);
                 }
             }
             fv->push_back(fdv);
         }
-        cE2Lj=events;
-        return fv;
-    }
-    
-    vector<vector<DATA>*>* selectData2j1b(Jet& j2lPtEta)
-    {
-        vector<DATA>* dv;
-        DATA d;
-        
-        vector<vector<DATA>*>* fv = new vector<vector<DATA>*>;
-        int events =0;
-        for(unsigned int i=0; i < (j2lPtEta.v->size()); i++)
-        {
-            int bjet_number1 = 0;
-            int jet_number2 = 0;
-            vector<DATA>* fdv= new vector<DATA>;
-          //  if((j2lPtEta.v->at(i))->size() != 2) continue;
-            if((j2lPtEta.v->at(i))->size() == 2)
-            {
-                dv=(j2lPtEta.v->at(i));
-                bool isEventSelected=false;
-                int PassedBJetsinEvent=0;
-                for(unsigned int j=0;j<dv->size();j++)
-                {
-                    d=dv->at(j);
-                    if(d.all && d.loosec)
-                    {
-                    
-                        bjet_number1 = j;
-                        PassedBJetsinEvent++;
-                    }
-                    else if(!(d.all && d.loosec))
-                    {
-                        jet_number2 = j;
-                    }
-                }
-            
-                if(PassedBJetsinEvent==1){isEventSelected=true;
-                }
-                if(isEventSelected)
-                {
-                    events++;
-                    d=dv->at(bjet_number1);
-                    fdv->push_back(d);
-                    d=dv->at(jet_number2);
-                    fdv->push_back(d);
-                }
-            }
-            fv->push_back(fdv);
-        }
-        cE2j1t=events;
-        return fv;
-    }
-    
-    vector<vector<DATA>*>* selectData2j2b(Jet& j2lPtEta)
-    {
-        vector<DATA>* dv;
-        DATA d;
-        
-        vector<vector<DATA>*>* fv = new vector<vector<DATA>*>;
-        int events =0;
-        for(unsigned int i=0; i < (j2lPtEta.v->size()); i++)
-        {
-            int jet_number1 = 0;
-            int jet_number2 = 0;
-            vector<DATA>* fdv= new vector<DATA>;
-         //   if((j2lPtEta.v->at(i))->size() != 2) continue;
-            if((j2lPtEta.v->at(i))->size() == 2)
-            {
-                dv=(j2lPtEta.v->at(i));
-                bool isEventSelected=false;
-                int PassedBJetsinEvent=0;
-                for(unsigned int j=0;j<dv->size();j++)
-                {
-                    d=dv->at(j);
-                    if(d.all)
-                    {
-                    
-                        if(PassedBJetsinEvent==0) jet_number1 = j;
-                        if(PassedBJetsinEvent==1) jet_number2 = j;
-                        PassedBJetsinEvent++;
-                    }
-                }
-            
-                if(PassedBJetsinEvent==2){isEventSelected=true;
-                }
-                if(isEventSelected)
-                {
-                    events++;
-                    d=dv->at(jet_number1);
-                    fdv->push_back(d);
-                    d=dv->at(jet_number2);
-                    fdv->push_back(d);
-                }
-            }
-            fv->push_back(fdv);
-        }
-        cE2j2t=events;
         return fv;
     }
     
@@ -510,10 +213,8 @@ public:
     {
         vector<DATA>* dv;
         float jet_Cut_pt = 30.0;
-        float jet_Cut_ptl = 20.0;
         float jet_Cut_eta = 2.4;
-        float jet_Cut_etal = 4.9;
-        float jet_Cut_csv = 0.9535;
+        float jet_Cut_csv = 0.8484;
         
         float jet_Cut_neutralHadronEnergyFrac = 0.99;
         float jet_Cut_neutralEmEnergyFrac1 = 0.99;
@@ -536,7 +237,6 @@ public:
                 d.etac = (fabs( d.eta ) < jet_Cut_eta)?true:false;
                 d.csvc = (d.csv > jet_Cut_csv)?true:false;
                 d.nonCsvc = (d.csv < jet_Cut_csv)?true:false;
-                d.all = d.ptc && d.etac && d.csvc;
                 
                 d.neutralHadronEnergyFraccc = (d.neutralHadronEnergyFrac < jet_Cut_neutralHadronEnergyFrac)?true:false;
                 d.neutralEmEnergyFraccc = (d.neutralEmEnergyFrac < jet_Cut_neutralEmEnergyFrac1)?true:false;
@@ -559,34 +259,9 @@ public:
                 }
                 else if(fabs( d.eta ) <= 3.0) Outside3 = true;
                 
-                d.loosec = within24eta && Outside3 && d.neutralHadronEnergyFraccc && d.neutralEmEnergyFraccc && d.NumConstituentscc && ((d.pt > jet_Cut_ptl)?true:false) && ((fabs( d.eta ) < jet_Cut_etal)?true:false);
+                d.loosec = within24eta && Outside3 && d.neutralHadronEnergyFraccc && d.neutralEmEnergyFraccc && d.NumConstituentscc && d.ptc && d.etac;
             }
         }
-        return;
-    }
-    
-    void fillHisto(TTree* t)
-    {
-   // cout<<"Entering fill histo in jet class"<<endl;
-        for(unsigned int i=0; i < v->size(); i++)
-        {
-          /*  if(JETMult->at(i)){jetMult_.push_back(JETMult->at(i));}
-            if(JETCLEANEDMult->at(i)){CllleanedJetMult_.push_back(JETCLEANEDMult->at(i));}
-            if(v->at(i)){beforeJetMult_.push_back((v->at(i))->size());}
-            */
-          //  cout<<"311111111111    :"<<endl;
-            jetMult_.push_back(JETMult->at(i));
-           // cout<<"311111111112    & size is :"<<(JETCLEANEDMult->at(i))<<endl;
-            CllleanedJetMult_.push_back(JETCLEANEDMult->at(i));
-           // cout<<"311111111113    :"<<endl;
-            beforeJetMult_.push_back((v->at(i))->size());
-           // cout<<"311111111114    :"<<endl;
-            t->Fill();
-            jetMult_.clear();
-            CllleanedJetMult_.clear();
-            beforeJetMult_.clear();
-        }
-       // cout<<"Exiting fill histo in jet class"<<endl;
         return;
     }
     
@@ -596,22 +271,7 @@ public:
         v=0;
     }
     
-    static TTree* getHistPointers(fwlite::TFileService& fs, const char* treeName)
-    {
-        TTree* t  = fs.make<TTree>(treeName,"");
-        t->Branch("jetMult_",&jetMult_);
-        t->Branch("CllleanedJetMult_",&CllleanedJetMult_);
-        t->Branch("beforeJetMult_",&beforeJetMult_);
-        return t;
-    }
-    
-    friend class ElectronMuon;
+    friend class ElectronMuonOppChrg;
     
 };
-
-vector<int> Jet::jetMult_;
-vector<int> Jet::CllleanedJetMult_;
-vector<int> Jet::beforeJetMult_;
-
-
 
